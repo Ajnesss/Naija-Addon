@@ -58,10 +58,13 @@ export function createAddonServer() {
     if (url.pathname === '/health') return sendJson(res, 200, { status: 'ok', addon: manifest.id, version: manifest.version });
     if (url.pathname === '/manifest.json') return sendJson(res, 200, manifest);
 
-    if (parts[0] === 'catalog' && parts.length === 3) {
-      const [, type, catalogId] = parts;
+    if (parts[0] === 'catalog' && (parts.length === 3 || parts.length === 4)) {
+      const [, type, catalogId, rawExtra] = parts;
       if (!['movie', 'series'].includes(type)) return sendJson(res, 200, { metas: [] });
-      const search = (url.searchParams.get('search') || '').slice(0, 120);
+      // Stremio-compatible clients may send extra arguments as a fourth
+      // path segment (search=...) rather than as a conventional query string.
+      const extra = new URLSearchParams(rawExtra ? rawExtra.replace(/\\.json$/, '') : '');
+      const search = (url.searchParams.get('search') || extra.get('search') || '').slice(0, 120);
       const metas = catalogItems(type, catalogId, search).map(toMetaPreview);
       return sendJson(res, 200, { metas });
     }
