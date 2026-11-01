@@ -75,3 +75,31 @@ test('HTTP protocol handles unknown and malformed IDs without crashing', async (
   const method = await fetch(`${base}/manifest.json`, { method: 'POST' });
   assert.equal(method.status, 405);
 });
+
+
+test('series require episode-level playable streams', () => {
+  const provider = [{ id: 'sample', status: 'approved', playbackVerified: true }];
+  const series = {
+    id: 'nollywood:test-series', type: 'series', name: 'Test series',
+    languages: ['igbo'], providerId: 'sample',
+    videos: [{
+      id: 'nollywood:test-series:1:1', title: 'Episode 1', season: 1, episode: 1,
+      streams: [{ externalUrl: 'https://provider.example/watch/episode-1' }]
+    }]
+  };
+  assert.equal(isApprovedPlayableItem(series, provider), true);
+  assert.equal(isApprovedPlayableItem({ ...series, videos: [] }, provider), false);
+  assert.equal(isApprovedPlayableItem({
+    ...series, videos: [{ ...series.videos[0], streams: [] }]
+  }, provider), false);
+});
+
+test('stream destinations cannot contain embedded credentials', () => {
+  const item = {
+    id: 'nollywood:test-title', type: 'movie', name: 'Test title',
+    languages: ['english'], providerId: 'sample',
+    streams: [{ url: 'https://user:pass@provider.example/video' }]
+  };
+  const providers = [{ id: 'sample', status: 'approved', playbackVerified: true }];
+  assert.equal(isApprovedPlayableItem(item, providers), false);
+});
