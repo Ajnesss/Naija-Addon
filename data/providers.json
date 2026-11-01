@@ -54,6 +54,15 @@
       "catalogue": "nollywood_yoruba_igbo_hausa",
       "playbackVerified": false,
       "integration": "App describes discovery from YouTube creators and one-tap YouTube playback. Excluded from core providers by project requirement."
+    },
+    {
+      "id": "muvidb",
+      "name": "MuviDB",
+      "website": "https://muvidb.com/",
+      "status": "metadata_only",
+      "catalogue": "nollywood_african_film_database",
+      "playbackVerified": false,
+      "integration": "Public developer API advertises a free non-commercial preview tier for metadata and streaming-platform availability. It does not provide authorised playback streams; API key required. Do not use as a playback provider."
     }
   ]
 }
