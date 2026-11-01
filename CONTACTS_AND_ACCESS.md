@@ -5,7 +5,7 @@ The project needs written permission or a documented public API before connectin
 | Provider | Public contact | Ask |
 |---|---|---|
 | NolliStream | olu@nollistream.com | Is there a partner API/feed or approved title-page linking method for a third-party Nuvio addon? Their terms currently prohibit automated scraping/access. |
-| AfroLandTV | support@afrolandtv.com | Do you offer an authorised catalogue feed, partner API or official deep links for a third-party TV addon? |
+| AfroLandTV | Official support/contact route on its website | Do you offer an authorised catalogue feed, partner API or official deep links for a third-party TV addon? |
 | AVO TV | Official website contact route | Is a third-party addon integration available under a written agreement? Terms prohibit scraping/reverse engineering. |
 | cAfrica | Official website contact route | Is there a documented public catalogue/playback API or partner integration? |
 | BlackFameTV | Official website contact route | When will VOD playback be restored, and is a third-party catalogue/deep-link integration permitted? |
