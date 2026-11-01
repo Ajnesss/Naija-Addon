@@ -37,6 +37,17 @@
     },
     {
       "type": "series",
+      "id": "english-series",
+      "name": "English-language Nollywood Series",
+      "extra": [
+        {
+          "name": "search",
+          "isRequired": false
+        }
+      ]
+    },
+    {
+      "type": "series",
       "id": "nollywood-series",
       "name": "Nollywood Series",
       "extra": [
