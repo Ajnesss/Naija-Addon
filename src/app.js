@@ -36,7 +36,10 @@ function decodeId(value) {
   try { return decodeURIComponent(value); } catch { return null; }
 }
 
-export function createAddonServer() {
+export function createAddonServer(catalogApi = {}) {
+  const listCatalogItems = catalogApi.catalogItems ?? catalogItems;
+  const findItem = catalogApi.getItem ?? getItem;
+  const findVideo = catalogApi.getVideo ?? getVideo;
   return http.createServer((req, res) => {
     let url;
     try {
@@ -69,7 +72,7 @@ export function createAddonServer() {
       const rawSkip = url.searchParams.get('skip') || extra.get('skip') || '0';
       const parsedSkip = Number.parseInt(rawSkip, 10);
       const skip = Number.isSafeInteger(parsedSkip) && parsedSkip > 0 ? Math.min(parsedSkip, 10000) : 0;
-      const metas = catalogItems(type, catalogId, search).slice(skip, skip + 100).map(toMetaPreview);
+      const metas = listCatalogItems(type, catalogId, search).slice(skip, skip + 100).map(toMetaPreview);
       return sendJson(res, 200, { metas });
     }
 
@@ -77,7 +80,7 @@ export function createAddonServer() {
       const [, type, rawId] = parts;
       const id = decodeId(rawId.endsWith('.json') ? rawId.slice(0, -5) : rawId);
       if (!id) return sendJson(res, 400, { error: 'Invalid title ID' });
-      const item = getItem(id);
+      const item = findItem(id);
       if (!item || item.type !== type) return sendJson(res, 404, { error: 'Title not found' });
       const videos = (item.videos ?? []).map(({ streams, ...video }) => video);
       return sendJson(res, 200, { meta: { ...toMetaPreview(item), videos } });
@@ -90,7 +93,7 @@ export function createAddonServer() {
       const item = getItem(id);
       if (item && item.type === type) return sendJson(res, 200, { streams: item.streams ?? [] });
       if (type === 'series') {
-        const resolved = getVideo(id);
+        const resolved = findVideo(id);
         if (resolved && resolved.item.type === 'series') {
           return sendJson(res, 200, { streams: resolved.video.streams ?? [] });
         }
