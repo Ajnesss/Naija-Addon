@@ -63,7 +63,8 @@ export function createAddonServer() {
       if (!['movie', 'series'].includes(type)) return sendJson(res, 200, { metas: [] });
       // Stremio-compatible clients may send extra arguments as a fourth
       // path segment (search=...) rather than as a conventional query string.
-      const extra = new URLSearchParams(rawExtra ? rawExtra.replace(/\\.json$/, '') : '');
+      const extraPath = rawExtra?.endsWith('.json') ? rawExtra.slice(0, -5) : (rawExtra || '');
+      const extra = new URLSearchParams(extraPath);
       const search = (url.searchParams.get('search') || extra.get('search') || '').slice(0, 120);
       const rawSkip = url.searchParams.get('skip') || extra.get('skip') || '0';
       const parsedSkip = Number.parseInt(rawSkip, 10);
@@ -84,7 +85,7 @@ export function createAddonServer() {
 
     if (parts[0] === 'stream' && parts.length === 3) {
       const [, type, rawId] = parts;
-      const id = decodeId(rawId);
+      const id = decodeId(rawId.endsWith('.json') ? rawId.slice(0, -5) : rawId);
       if (!id) return sendJson(res, 200, { streams: [] });
       const item = getItem(id);
       if (item && item.type === type) return sendJson(res, 200, { streams: item.streams ?? [] });
