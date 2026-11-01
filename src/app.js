@@ -65,7 +65,10 @@ export function createAddonServer() {
       // path segment (search=...) rather than as a conventional query string.
       const extra = new URLSearchParams(rawExtra ? rawExtra.replace(/\\.json$/, '') : '');
       const search = (url.searchParams.get('search') || extra.get('search') || '').slice(0, 120);
-      const metas = catalogItems(type, catalogId, search).map(toMetaPreview);
+      const rawSkip = url.searchParams.get('skip') || extra.get('skip') || '0';
+      const parsedSkip = Number.parseInt(rawSkip, 10);
+      const skip = Number.isSafeInteger(parsedSkip) && parsedSkip > 0 ? Math.min(parsedSkip, 10000) : 0;
+      const metas = catalogItems(type, catalogId, search).slice(skip, skip + 100).map(toMetaPreview);
       return sendJson(res, 200, { metas });
     }
 
