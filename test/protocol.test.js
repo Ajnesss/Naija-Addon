@@ -52,6 +52,9 @@ test('HTTP protocol exposes manifest, health and empty catalogues', async (t) =>
 
   const catalog = await fetch(`${base}/catalog/movie/nollywood-movies.json`);
   assert.deepEqual(await catalog.json(), { metas: [] });
+
+  const searchCatalog = await fetch(`${base}/catalog/movie/nollywood-movies/search=Yoruba.json`);
+  assert.deepEqual(await searchCatalog.json(), { metas: [] });
 });
 
 test('HTTP protocol handles unknown and malformed IDs without crashing', async (t) => {
