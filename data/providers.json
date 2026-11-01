@@ -1,0 +1,60 @@
+{
+  "providers": [
+    {
+      "id": "nollistream",
+      "name": "NolliStream",
+      "website": "https://nollistream.com/",
+      "status": "permission_required",
+      "catalogue": "dedicated_nollywood",
+      "playbackVerified": false,
+      "integration": "No public addon API/feed verified. Terms prohibit automated scraping/access and unauthorised copying/distribution.",
+      "contact": "olu@nollistream.com"
+    },
+    {
+      "id": "blackfametv",
+      "name": "BlackFameTV",
+      "website": "https://blackfametv.com/",
+      "status": "temporarily_unavailable",
+      "catalogue": "nollywood_category",
+      "playbackVerified": false,
+      "integration": "Site reports movie playback is down during server migration. No public addon API or permission verified."
+    },
+    {
+      "id": "afrolandtv",
+      "name": "AfroLandTV",
+      "website": "https://www.afrolandtv.com/",
+      "status": "permission_required",
+      "catalogue": "african_nollywood",
+      "playbackVerified": false,
+      "integration": "Rights-holder submission portal exists; no public addon API/feed or third-party integration permission verified.",
+      "contact": "support@afrolandtv.com"
+    },
+    {
+      "id": "avo",
+      "name": "AVO TV",
+      "website": "https://www.avo.tv/",
+      "status": "permission_required",
+      "catalogue": "dedicated_nollywood",
+      "playbackVerified": false,
+      "integration": "Terms prohibit scraping, reverse engineering, redistribution and circumvention."
+    },
+    {
+      "id": "cafrica",
+      "name": "cAfrica",
+      "website": "https://cafrica.tv/",
+      "status": "permission_required",
+      "catalogue": "african_nollywood",
+      "playbackVerified": false,
+      "integration": "Free streaming is advertised; no public addon API/feed or third-party playback permission verified."
+    },
+    {
+      "id": "filmflux",
+      "name": "FilmFlux",
+      "website": "https://www.filmflux.app/",
+      "status": "excluded_youtube_led",
+      "catalogue": "nollywood_yoruba_igbo_hausa",
+      "playbackVerified": false,
+      "integration": "App describes discovery from YouTube creators and one-tap YouTube playback. Excluded from core providers by project requirement."
+    }
+  ]
+}
