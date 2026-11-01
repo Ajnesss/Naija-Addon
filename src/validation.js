@@ -33,7 +33,8 @@ export function isApprovedPlayableItem(item, providers) {
 
   const seenVideoIds = new Set();
   return item.videos.every((video) => {
-    if (!video || typeof video.id !== 'string' || !/^nollywood:[a-z0-9][a-z0-9:_-]*$/i.test(video.id)) return false;
+    if (!video || typeof video.id !== 'string' || !video.id.startsWith(`${item.id}:`) ||
+        !/^nollywood:[a-z0-9][a-z0-9:_-]*$/i.test(video.id)) return false;
     if (seenVideoIds.has(video.id)) return false;
     seenVideoIds.add(video.id);
     return typeof video.title === 'string' && video.title.trim() &&
