@@ -5,7 +5,7 @@
   "description": "Standalone Nuvio addon for authorised Nollywood catalogues and playback sources.",
   "type": "module",
   "engines": {
-    "node": ">=18"
+    "node": ">=22"
   },
   "scripts": {
     "start": "node src/server.js",
