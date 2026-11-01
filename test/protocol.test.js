@@ -147,3 +147,20 @@ test('metadata and movie or episode stream routes resolve protocol IDs', async (
   const episodeStreams = await fetch(`${base}/stream/series/nollywood%3Afixture-series%3A1%3A1.json`);
   assert.deepEqual((await episodeStreams.json()).streams, series.videos[0].streams);
 });
+
+test('series episode IDs must belong to their parent series', () => {
+  const provider = [{ id: 'sample', status: 'approved', playbackVerified: true }];
+  const series = {
+    id: 'nollywood:parent-series', type: 'series', name: 'Parent series',
+    languages: ['hausa'], providerId: 'sample',
+    videos: [{
+      id: 'nollywood:another-series:1:1', title: 'Episode 1', season: 1, episode: 1,
+      streams: [{ externalUrl: 'https://provider.example/watch/episode-1' }]
+    }]
+  };
+  assert.equal(isApprovedPlayableItem(series, provider), false);
+  assert.equal(isApprovedPlayableItem({
+    ...series,
+    videos: [{ ...series.videos[0], id: 'nollywood:parent-series:1:1' }]
+  }, provider), true);
+});
