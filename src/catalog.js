@@ -28,3 +28,11 @@ export function catalogItems(type, catalogId, search = '') {
     return searchable.includes(query);
   });
 }
+
+export function getVideo(id) {
+  for (const item of visibleItems) {
+    const video = (item.videos ?? []).find((candidate) => candidate.id === id);
+    if (video) return { item, video };
+  }
+  return null;
+}
