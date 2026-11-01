@@ -15,6 +15,8 @@ A free-to-watch website does not automatically permit scraping, stream extractio
 | cAfrica | African movies, Nollywood, series and live channels | Official app listing describes free streaming with optional premium | No public addon API/feed or third-party playback permission verified | Contact for partnership/API |
 | FilmFlux | Nollywood, Yoruba, Igbo and Hausa/Kannywood discovery | App listing describes free access | Discovery is explicitly based on YouTube creators and playback hands off to YouTube | Excluded as a core provider, per project requirement |
 | NG-Movies | Broad Nigerian/African movie catalogue | Official site describes free access | Site says video is displayed using YouTube standard APIs/players/embeds | Not a core source; YouTube-led |
+| Vuma+ | African film discovery, including Nollywood | Free, no account advertised | Terms say playback is through YouTube embedded player and prohibit automated bots/scrapers; not an independent playback source | Excluded from core sources; YouTube-led |
+| MuviDB | Nollywood/African film metadata and where-to-watch discovery | Free non-commercial API preview advertised; first 500 catalogue records | Developer API offers metadata and streaming-platform availability, not authorised video playback. Requires an API key; commercial use requires a paid licence | Metadata-only candidate; never treat as a stream provider |
 
 ## Verification rules
 
@@ -35,6 +37,8 @@ A free-to-watch website does not automatically permit scraping, stream extractio
 - cAfrica: https://cafrica.tv/
 - FilmFlux: https://www.filmflux.app/
 - NG-Movies: https://ng-movies.com/en
+- Vuma+ terms: https://vumaplus.com/terms
+- MuviDB developer API and licence tiers: https://muvidb.com/developers
 
 ## Next integration gate
 
