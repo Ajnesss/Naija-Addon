@@ -90,7 +90,7 @@ export function createAddonServer(catalogApi = {}) {
       const [, type, rawId] = parts;
       const id = decodeId(rawId.endsWith('.json') ? rawId.slice(0, -5) : rawId);
       if (!id) return sendJson(res, 200, { streams: [] });
-      const item = getItem(id);
+      const item = findItem(id);
       if (item && item.type === type) return sendJson(res, 200, { streams: item.streams ?? [] });
       if (type === 'series') {
         const resolved = findVideo(id);
