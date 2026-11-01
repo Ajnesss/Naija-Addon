@@ -31,3 +31,10 @@ Only integrate a provider through a documented public API/feed or explicit permi
 ## Deployment isolation
 
 This repository is independent. It must use its own service, environment and deployment. Do not reuse or modify the German addon repository, its Oracle instance, its secrets, or its running services.
+
+
+## Provider verification
+
+See [PROVIDER_STATUS.md](PROVIDER_STATUS.md) and [CONTACTS_AND_ACCESS.md](CONTACTS_AND_ACCESS.md). A provider must be explicitly approved and have verified full-length playback before any title is exposed in the catalogue. This gate is enforced in the server code; unapproved providers are filtered out.
+
+GitHub Actions runs the Node test suite on pushes and pull requests.
