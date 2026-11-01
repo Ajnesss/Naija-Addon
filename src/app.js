@@ -1,7 +1,7 @@
 import http from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
-import { catalogItems, getItem } from './catalog.js';
+import { catalogItems, getItem, getVideo } from './catalog.js';
 
 const manifest = JSON.parse(await readFile(fileURLToPath(new URL('../manifest.json', import.meta.url)), 'utf8'));
 
@@ -75,7 +75,8 @@ export function createAddonServer() {
       if (!id) return sendJson(res, 400, { error: 'Invalid title ID' });
       const item = getItem(id);
       if (!item || item.type !== type) return sendJson(res, 404, { error: 'Title not found' });
-      return sendJson(res, 200, { meta: { ...toMetaPreview(item), videos: item.videos ?? [] } });
+      const videos = (item.videos ?? []).map(({ streams, ...video }) => video);
+      return sendJson(res, 200, { meta: { ...toMetaPreview(item), videos } });
     }
 
     if (parts[0] === 'stream' && parts.length === 3) {
@@ -83,8 +84,14 @@ export function createAddonServer() {
       const id = decodeId(rawId);
       if (!id) return sendJson(res, 200, { streams: [] });
       const item = getItem(id);
-      if (!item || item.type !== type) return sendJson(res, 200, { streams: [] });
-      return sendJson(res, 200, { streams: item.streams ?? [] });
+      if (item && item.type === type) return sendJson(res, 200, { streams: item.streams ?? [] });
+      if (type === 'series') {
+        const resolved = getVideo(id);
+        if (resolved && resolved.item.type === 'series') {
+          return sendJson(res, 200, { streams: resolved.video.streams ?? [] });
+        }
+      }
+      return sendJson(res, 200, { streams: [] });
     }
 
     return sendJson(res, 404, { error: 'Not found' });
