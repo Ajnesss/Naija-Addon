@@ -74,7 +74,7 @@ export function createAddonServer() {
 
     if (parts[0] === 'meta' && parts.length === 3) {
       const [, type, rawId] = parts;
-      const id = decodeId(rawId);
+      const id = decodeId(rawId.endsWith('.json') ? rawId.slice(0, -5) : rawId);
       if (!id) return sendJson(res, 400, { error: 'Invalid title ID' });
       const item = getItem(id);
       if (!item || item.type !== type) return sendJson(res, 404, { error: 'Title not found' });
