@@ -17,7 +17,7 @@ The server listens on `PORT` (default `7000`) and `HOST` (default `0.0.0.0`). Ch
 ## Catalogues
 
 - All Nollywood Movies
-- English-language Nollywood
+- English-language Nollywood Movies and Series
 - Nollywood Series
 - Yoruba Films and Series
 - Igbo Films and Series
