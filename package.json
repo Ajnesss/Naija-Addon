@@ -1,0 +1,9 @@
+{
+  "name": "naija-nuvio-addon",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Standalone Nuvio addon for authorised Nollywood catalogues and playback sources.",
+  "type": "module",
+  "engines": { "node": ">=18" },
+  "scripts": { "start": "node src/server.js", "test": "node --test" }
+}
