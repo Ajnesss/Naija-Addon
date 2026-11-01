@@ -22,7 +22,7 @@ The server listens on `PORT` (default `7000`) and `HOST` (default `0.0.0.0`). Ch
 - Igbo Films
 - Hausa & Kannywood Films
 
-Add verified title metadata to `data/catalog.json`. Use IDs prefixed with `nollywood:`. `languages` may contain `yoruba`, `igbo`, and `hausa`.
+Add verified title metadata to `data/catalog.json`. Use IDs prefixed with `nollywood:`. `languages` may contain `english`, `yoruba`, `igbo`, and `hausa`. Movie entries use a verified `streams` array. Series entries use a `videos` array with a unique episode ID, season/episode numbers, and a verified stream list for each episode. See [the adapter contract](providers/ADAPTER_CONTRACT.md) before adding data.
 
 ## Provider policy
 
