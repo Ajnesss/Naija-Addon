@@ -103,3 +103,42 @@ test('stream destinations cannot contain embedded credentials', () => {
   const providers = [{ id: 'sample', status: 'approved', playbackVerified: true }];
   assert.equal(isApprovedPlayableItem(item, providers), false);
 });
+
+
+test('metadata and movie or episode stream routes resolve protocol IDs', async (t) => {
+  const movie = {
+    id: 'nollywood:fixture-movie', type: 'movie', name: 'Fixture movie',
+    streams: [{ url: 'https://media.example/fixture.mp4' }]
+  };
+  const series = {
+    id: 'nollywood:fixture-series', type: 'series', name: 'Fixture series',
+    videos: [{
+      id: 'nollywood:fixture-series:1:1', title: 'Episode 1', season: 1, episode: 1,
+      streams: [{ url: 'https://media.example/episode-1.mp4' }]
+    }]
+  };
+  const items = [movie, series];
+  const server = createAddonServer({
+    catalogItems: () => items,
+    getItem: (id) => items.find((item) => item.id === id) ?? null,
+    getVideo: (id) => {
+      for (const item of items) {
+        const video = (item.videos ?? []).find((entry) => entry.id === id);
+        if (video) return { item, video };
+      }
+      return null;
+    }
+  });
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  t.after(() => new Promise((resolve) => server.close(resolve)));
+  const base = `http://127.0.0.1:${server.address().port}`;
+
+  const meta = await fetch(`${base}/meta/movie/nollywood%3Afixture-movie.json`);
+  assert.equal((await meta.json()).meta.id, movie.id);
+
+  const movieStreams = await fetch(`${base}/stream/movie/nollywood%3Afixture-movie.json`);
+  assert.deepEqual((await movieStreams.json()).streams, movie.streams);
+
+  const episodeStreams = await fetch(`${base}/stream/series/nollywood%3Afixture-series%3A1%3A1.json`);
+  assert.deepEqual((await episodeStreams.json()).streams, series.videos[0].streams);
+});
