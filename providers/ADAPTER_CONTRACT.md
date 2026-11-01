@@ -16,7 +16,7 @@ A provider adapter must not be enabled merely because a website lists films. It 
 - Display title and original title where useful
 - Language: `english`, `yoruba`, `igbo`, or `hausa`
 - Provider ID, official title URL, artwork URL where permitted
-- For series: season and episode identifiers
+- For series: a `videos` array with a unique `nollywood:` video ID, episode title, season and episode number, plus its own verified HTTPS stream list
 - Source attribution and rights/permission notes
 
 ## Playback rules
