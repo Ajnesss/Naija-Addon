@@ -50,6 +50,7 @@ test('HTTP protocol exposes manifest, health and empty catalogues', async (t) =>
   assert.equal(manifestBody.id, 'community.naija.nuvio');
   assert.ok(manifestBody.catalogs.some((catalog) => catalog.id === 'hausa-movies'));
   assert.ok(manifestBody.catalogs.some((catalog) => catalog.id === 'english-movies'));
+  assert.ok(manifestBody.catalogs.some((catalog) => catalog.id === 'english-series'));
   assert.ok(manifestBody.catalogs.some((catalog) => catalog.id === 'yoruba-series'));
   assert.ok(manifestBody.catalogs.some((catalog) => catalog.id === 'igbo-series'));
   assert.ok(manifestBody.catalogs.some((catalog) => catalog.id === 'hausa-series'));
