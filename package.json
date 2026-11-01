@@ -4,6 +4,12 @@
   "private": true,
   "description": "Standalone Nuvio addon for authorised Nollywood catalogues and playback sources.",
   "type": "module",
-  "engines": { "node": ">=18" },
-  "scripts": { "start": "node src/server.js", "test": "node --test" }
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test",
+    "validate:catalog": "node scripts/validate-catalog.js"
+  }
 }
