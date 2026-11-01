@@ -1,0 +1,17 @@
+{
+  "id": "community.naija.nuvio",
+  "version": "0.1.0",
+  "name": "Naija Movies & Series",
+  "description": "Nollywood, Yoruba, Igbo and Hausa/Kannywood titles from verified sources.",
+  "resources": ["catalog", "meta", "stream"],
+  "types": ["movie", "series"],
+  "catalogs": [
+    { "type": "movie", "id": "nollywood-movies", "name": "Nollywood Movies", "extra": [{ "name": "search", "isRequired": false }] },
+    { "type": "series", "id": "nollywood-series", "name": "Nollywood Series", "extra": [{ "name": "search", "isRequired": false }] },
+    { "type": "movie", "id": "yoruba-movies", "name": "Yoruba Films", "extra": [{ "name": "search", "isRequired": false }] },
+    { "type": "movie", "id": "igbo-movies", "name": "Igbo Films", "extra": [{ "name": "search", "isRequired": false }] },
+    { "type": "movie", "id": "hausa-movies", "name": "Hausa & Kannywood Films", "extra": [{ "name": "search", "isRequired": false }] }
+  ],
+  "idPrefixes": ["nollywood:"],
+  "behaviorHints": { "configurable": false, "configurationRequired": false }
+}
