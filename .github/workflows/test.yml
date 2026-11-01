@@ -13,5 +13,6 @@ jobs:
         with:
           node-version: 22
       - run: npm test
+      - run: npm run validate:catalog
       - name: Build container image
         run: docker build -t naija-nuvio-addon:test .
