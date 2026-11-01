@@ -15,10 +15,16 @@ if (!Array.isArray(items) || !Array.isArray(providers)) {
   const ids = new Set();
   const invalid = [];
   for (const item of items) {
-    if (ids.has(item?.id)) invalid.push(`Duplicate title ID: ${item?.id ?? '(missing)'}`);
-    ids.add(item?.id);
     if (!isApprovedPlayableItem(item, providers)) {
       invalid.push(`Not approved or not playback-verified: ${item?.id ?? '(missing ID)'}`);
+    }
+    const allIds = [item?.id, ...(Array.isArray(item?.videos) ? item.videos.map((video) => video?.id) : [])];
+    for (const id of allIds) {
+      if (typeof id !== 'string' || ids.has(id)) {
+        invalid.push(`Missing or duplicate catalogue/video ID: ${id ?? '(missing)'}`);
+      } else {
+        ids.add(id);
+      }
     }
   }
   if (invalid.length) {
