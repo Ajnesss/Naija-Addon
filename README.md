@@ -16,11 +16,12 @@ The server listens on `PORT` (default `7000`) and `HOST` (default `0.0.0.0`). Ch
 
 ## Catalogues
 
-- Nollywood Movies
+- All Nollywood Movies
+- English-language Nollywood
 - Nollywood Series
-- Yoruba Films
-- Igbo Films
-- Hausa & Kannywood Films
+- Yoruba Films and Series
+- Igbo Films and Series
+- Hausa & Kannywood Films and Series
 
 Add verified title metadata to `data/catalog.json`. Use IDs prefixed with `nollywood:`. `languages` may contain `english`, `yoruba`, `igbo`, and `hausa`. Movie entries use a verified `streams` array. Series entries use a `videos` array with a unique episode ID, season/episode numbers, and a verified stream list for each episode. See [the adapter contract](providers/ADAPTER_CONTRACT.md) before adding data.
 
