@@ -1,6 +1,6 @@
 # Provider research and integration status
 
-Last checked: 1 November 2026
+Last checked: 2 November 2026
 
 A free-to-watch website does not automatically permit scraping, stream extraction, embedding or redistribution.
 
@@ -17,6 +17,10 @@ A free-to-watch website does not automatically permit scraping, stream extractio
 | NG-Movies | Broad Nigerian/African movie catalogue | Official site describes free access | Site says video is displayed using YouTube standard APIs/players/embeds | Not a core source; YouTube-led |
 | Vuma+ | African film discovery, including Nollywood | Free, no account advertised | Terms say playback is through YouTube embedded player and prohibit automated bots/scrapers; not an independent playback source | Excluded from core sources; YouTube-led |
 | MuviDB | Nollywood/African film metadata and where-to-watch discovery | Free non-commercial API preview advertised; first 500 catalogue records | Developer API offers metadata and streaming-platform availability, not authorised video playback. Requires an API key; commercial use requires a paid licence | Metadata-only candidate; never treat as a stream provider |
+| African Movie Channel / Nolly Africa HD | Dedicated English-language Nollywood movies, series and unscripted content | Free ad-supported 24/7 live channel; available in the UK on Freeview 287, Samsung TV Plus 4208, LG Channels 1161 and Plex | Official broadcaster and rights owner for AMC Originals; no public third-party API or Nuvio playback feed documented. Linear channel only, not title-on-demand | **Best verified content/distribution lead.** Ask AMC about an authorised live FAST feed/API or Nuvio distribution permission; do not extract partner platform streams |
+| Showmine Entertainment | Nigerian streaming service advertising thousands of Nollywood/African films and series | Subscription plans; no free full-catalogue tier confirmed | Official developer page explicitly invites integration partner enquiries and describes its own backend/CDN; no public API docs | Strong technical partnership lead, but paid service and access/API terms need confirmation |
+| Aflik TV | Nollywood distributor with claimed large catalogue and multi-platform VOD licensing | Free access not established | Public site claims distribution/licensing across 124+ platforms, but information appears old; no API/feed docs | Potential rights-holder/distributor lead; verify current operation, catalogue, territory rights and integration capability before relying on it |
+| GLO-TV | Nollywood movies in Hausa, Igbo, Yoruba and English, plus other content | App is free, but service requires a Glo prepaid/postpaid mobile subscription in Nigeria | No public API/feed; access is explicitly limited to Glo network subscribers in Nigeria | Not suitable for UK mum or Nuvio integration |
 
 ## Verification rules
 
@@ -28,6 +32,12 @@ A free-to-watch website does not automatically permit scraping, stream extractio
 
 ## Official references
 
+- African Movie Channel / Nolly Africa HD: https://africanmoviechannel.tv/products-and-services
+- Nolly Africa HD on Plex: https://watch.plex.tv/en-GB/live-tv/channel/nolly-africa-hd
+- African Movie Channel contact: https://www.africanmoviechannel.tv/contact
+- Showmine developer / integration information: https://www.showmine.ng/developers.php
+- Aflik TV: https://afliktv.com/
+- GLO-TV official app listing: https://play.google.com/store/apps/details?id=com.tvanywhereafrica.glotv
 - NolliStream: https://nollistream.com/
 - NolliStream terms: https://nollistream.com/terms
 - BlackFameTV: https://blackfametv.com/
@@ -42,4 +52,4 @@ A free-to-watch website does not automatically permit scraping, stream extractio
 
 ## Next integration gate
 
-Request written permission or documented public API/feed details from NolliStream, BlackFameTV, AfroLandTV, AVO TV and cAfrica. The provider must specify whether its permitted integration is a catalogue metadata feed, a title-specific official watch-page link, or an authorised playback stream/feed for third-party clients. These permissions are not interchangeable.
+Prioritise African Movie Channel for an authorised Nolly Africa HD live-channel feed or Nuvio distribution permission, and Showmine for a technical integration discussion. Separately verify Aflik TV's current rights catalogue. Request written permission or documented public API/feed details from NolliStream, BlackFameTV, AfroLandTV, AVO TV and cAfrica. The provider must specify whether its permitted integration is a catalogue metadata feed, a title-specific official watch-page link, or an authorised playback stream/feed for third-party clients. These permissions are not interchangeable.
