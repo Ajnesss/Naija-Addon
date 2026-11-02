@@ -2,6 +2,14 @@
 
 A standalone Node.js addon for discovering Nollywood films and series through Nuvio's Stremio-compatible addon protocol.
 
+## How it works (v0.2)
+
+The addon is a **discovery catalogue**. With a free TMDB key set (`TMDB_API_KEY`) it lists Nigerian films and series by language (Yoruba, Igbo, Hausa, English) using IMDb IDs. When you open a title, Nuvio asks the stream addons you already have installed (for example your AIOStreams config) for streams, exactly as for any other title. This addon never returns streams for TMDB titles and does not host, scrape or link to video.
+
+Without a key the catalogues are empty. Set `TMDB_API_KEY` to either a TMDB v3 API key or a v4 read-access token (starts with `eyJ`).
+
+Limits: only titles TMDB has an IMDb ID for are shown, and TMDB's coverage of Yoruba/Igbo/Hausa titles is patchy, so some catalogues will be short. Whether a title plays depends on your stream addons.
+
 ## Status
 
 This is the protocol foundation. It exposes a manifest, movie/series catalogues, metadata and stream routes. The catalogue starts empty intentionally: no provider is marked as working until its public integration method, rights/terms and playback behaviour have been verified. This avoids presenting dead links, trailers or YouTube clips as full-film streams.

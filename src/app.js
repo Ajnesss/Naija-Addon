@@ -36,11 +36,21 @@ function decodeId(value) {
   try { return decodeURIComponent(value); } catch { return null; }
 }
 
-export function createAddonServer(catalogApi = {}) {
+export function createAddonServer(catalogApi = {}, { tmdb = null } = {}) {
   const listCatalogItems = catalogApi.catalogItems ?? catalogItems;
   const findItem = catalogApi.getItem ?? getItem;
   const findVideo = catalogApi.getVideo ?? getVideo;
-  return http.createServer((req, res) => {
+  return http.createServer(async (req, res) => {
+    try {
+      await handle(req, res);
+    } catch (error) {
+      console.error('Request failed:', error?.message ?? error);
+      if (!res.headersSent) sendJson(res, 500, { error: 'Internal error' });
+      else res.end();
+    }
+  });
+
+  async function handle(req, res) {
     let url;
     try {
       url = new URL(req.url, 'http://localhost');
@@ -62,7 +72,9 @@ export function createAddonServer(catalogApi = {}) {
     if (url.pathname === '/manifest.json') return sendJson(res, 200, manifest);
 
     if (parts[0] === 'catalog' && (parts.length === 3 || parts.length === 4)) {
-      const [, type, catalogId, rawExtra] = parts;
+      const [, type, rawCatalogId, rawExtra] = parts;
+      // /catalog/<type>/<id>.json when there are no extra args; /catalog/<type>/<id>/<extra>.json otherwise
+      const catalogId = rawExtra === undefined && rawCatalogId.endsWith('.json') ? rawCatalogId.slice(0, -5) : rawCatalogId;
       if (!['movie', 'series'].includes(type)) return sendJson(res, 200, { metas: [] });
       // Stremio-compatible clients may send extra arguments as a fourth
       // path segment (search=...) rather than as a conventional query string.
@@ -72,8 +84,17 @@ export function createAddonServer(catalogApi = {}) {
       const rawSkip = url.searchParams.get('skip') || extra.get('skip') || '0';
       const parsedSkip = Number.parseInt(rawSkip, 10);
       const skip = Number.isSafeInteger(parsedSkip) && parsedSkip > 0 ? Math.min(parsedSkip, 10000) : 0;
-      const metas = listCatalogItems(type, catalogId, search).slice(skip, skip + 100).map(toMetaPreview);
-      return sendJson(res, 200, { metas });
+      const local = listCatalogItems(type, catalogId, search).slice(skip, skip + 100).map(toMetaPreview);
+      let remote = [];
+      if (tmdb) {
+        try {
+          remote = await tmdb.list(type, catalogId, { search, skip });
+        } catch (error) {
+          console.error('TMDB catalogue failed:', error?.message ?? error);
+        }
+      }
+      const known = new Set(local.map((meta) => meta.id));
+      return sendJson(res, 200, { metas: [...local, ...remote.filter((meta) => !known.has(meta.id))] });
     }
 
     if (parts[0] === 'meta' && parts.length === 3) {
@@ -102,5 +123,5 @@ export function createAddonServer(catalogApi = {}) {
     }
 
     return sendJson(res, 404, { error: 'Not found' });
-  });
+  }
 }

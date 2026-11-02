@@ -14,6 +14,13 @@ A Render Blueprint is included at `render.yaml`. It creates a separate web servi
 
 The Blueprint uses Render's free web-service plan. Free instances can spin down after inactivity, so the first request after a quiet period may take longer. If always-on availability is important, change the service plan in Render.
 
+## TMDB key (required for catalogues)
+
+1. Create a free account at themoviedb.org, then go to Settings -> API and request a key.
+2. In Render, open the service -> Environment -> add `TMDB_API_KEY` with your key (v3 key or v4 read token). Redeploy.
+3. Check `/catalog/movie/yoruba-movies.json` returns titles.
+4. In Nuvio, add the addon using `https://<your-service>.onrender.com/manifest.json`.
+
 ## Local / Docker
 
 Requirements: Node.js 22 or Docker.
