@@ -1,15 +1,14 @@
 {
   "name": "naija-nuvio-addon",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "private": true,
-  "description": "Standalone Nuvio addon for authorised Nollywood catalogues and playback sources.",
+  "description": "Stream-only Nuvio addon that finds full-length Nigerian films and episodes on YouTube for titles opened in Nuvio.",
   "type": "module",
   "engines": {
     "node": ">=22"
   },
   "scripts": {
     "start": "node src/server.js",
-    "test": "node --test",
-    "validate:catalog": "node scripts/validate-catalog.js"
+    "test": "node --test"
   }
 }

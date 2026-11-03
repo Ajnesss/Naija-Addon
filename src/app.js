@@ -1,9 +1,12 @@
 import http from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
-import { catalogItems, getItem, getVideo } from './catalog.js';
+import { createCinemeta, isNigerian, runtimeMinutes } from './cinemeta.js';
 
 const manifest = JSON.parse(await readFile(fileURLToPath(new URL('../manifest.json', import.meta.url)), 'utf8'));
+
+// movie: tt1234567    series episode: tt1234567:1:2
+const ID_PATTERN = /^(tt\d{1,10})(?::(\d{1,3}):(\d{1,4}))?$/;
 
 function sendJson(res, status, body) {
   res.writeHead(status, {
@@ -15,32 +18,49 @@ function sendJson(res, status, body) {
   res.end(JSON.stringify(body));
 }
 
-function toMetaPreview(item) {
-  const meta = {
-    id: item.id,
-    type: item.type,
-    name: item.name,
-    poster: item.poster,
-    description: item.description,
-    releaseInfo: item.releaseInfo,
-    genres: item.genres,
-    posterShape: 'poster'
-  };
-  for (const key of Object.keys(meta)) {
-    if (meta[key] === undefined || meta[key] === null || meta[key] === '') delete meta[key];
+function toStreams(videos) {
+  const streams = videos.map((video) => ({
+    name: 'Naija\nYouTube',
+    title: `${video.title}\n${video.channel} · ${Math.round(video.minutes)} min`,
+    ytId: video.id
+  }));
+  if (videos[0]) {
+    streams.push({
+      name: 'Naija\nOpen in YouTube',
+      title: `${videos[0].title}\nOpens in the YouTube app or browser`,
+      externalUrl: `https://www.youtube.com/watch?v=${videos[0].id}`
+    });
   }
-  return meta;
+  return streams;
 }
 
-function decodeId(value) {
-  try { return decodeURIComponent(value); } catch { return null; }
-}
+export function createAddonServer({ cinemeta = createCinemeta(), youtube = null } = {}) {
+  async function streamsFor(type, rawId) {
+    if (!youtube) return [];
+    const match = ID_PATTERN.exec(rawId);
+    if (!match) return [];
+    const [, imdbId, seasonText, episodeText] = match;
+    if (type === 'series' && !seasonText) return [];
+    if (type === 'movie' && seasonText) return [];
 
-export function createAddonServer(catalogApi = {}) {
-  const listCatalogItems = catalogApi.catalogItems ?? catalogItems;
-  const findItem = catalogApi.getItem ?? getItem;
-  const findVideo = catalogApi.getVideo ?? getVideo;
-  return http.createServer((req, res) => {
+    const meta = await cinemeta.getMeta(type, imdbId);
+    // Stay silent for anything that is not a Nigerian title.
+    if (!meta || !isNigerian(meta)) return [];
+
+    const year = Number.parseInt(meta.year ?? meta.releaseInfo, 10) || null;
+    const videos = await youtube.find({
+      type,
+      imdbId,
+      name: meta.name,
+      year,
+      runtimeMinutes: runtimeMinutes(meta),
+      season: seasonText ? Number(seasonText) : undefined,
+      episode: episodeText ? Number(episodeText) : undefined
+    });
+    return toStreams(videos);
+  }
+
+  async function handle(req, res) {
     let url;
     try {
       url = new URL(req.url, 'http://localhost');
@@ -58,49 +78,35 @@ export function createAddonServer(catalogApi = {}) {
       return res.end();
     }
     if (req.method !== 'GET') return sendJson(res, 405, { error: 'Method not allowed' });
-    if (url.pathname === '/health') return sendJson(res, 200, { status: 'ok', addon: manifest.id, version: manifest.version });
+    if (url.pathname === '/health') {
+      return sendJson(res, 200, { status: 'ok', addon: manifest.id, version: manifest.version, youtube: Boolean(youtube) });
+    }
     if (url.pathname === '/manifest.json') return sendJson(res, 200, manifest);
-
-    if (parts[0] === 'catalog' && (parts.length === 3 || parts.length === 4)) {
-      const [, type, catalogId, rawExtra] = parts;
-      if (!['movie', 'series'].includes(type)) return sendJson(res, 200, { metas: [] });
-      // Stremio-compatible clients may send extra arguments as a fourth
-      // path segment (search=...) rather than as a conventional query string.
-      const extraPath = rawExtra?.endsWith('.json') ? rawExtra.slice(0, -5) : (rawExtra || '');
-      const extra = new URLSearchParams(extraPath);
-      const search = (url.searchParams.get('search') || extra.get('search') || '').slice(0, 120);
-      const rawSkip = url.searchParams.get('skip') || extra.get('skip') || '0';
-      const parsedSkip = Number.parseInt(rawSkip, 10);
-      const skip = Number.isSafeInteger(parsedSkip) && parsedSkip > 0 ? Math.min(parsedSkip, 10000) : 0;
-      const metas = listCatalogItems(type, catalogId, search).slice(skip, skip + 100).map(toMetaPreview);
-      return sendJson(res, 200, { metas });
-    }
-
-    if (parts[0] === 'meta' && parts.length === 3) {
-      const [, type, rawId] = parts;
-      const id = decodeId(rawId.endsWith('.json') ? rawId.slice(0, -5) : rawId);
-      if (!id) return sendJson(res, 400, { error: 'Invalid title ID' });
-      const item = findItem(id);
-      if (!item || item.type !== type) return sendJson(res, 404, { error: 'Title not found' });
-      const videos = (item.videos ?? []).map(({ streams, ...video }) => video);
-      return sendJson(res, 200, { meta: { ...toMetaPreview(item), videos } });
-    }
 
     if (parts[0] === 'stream' && parts.length === 3) {
       const [, type, rawId] = parts;
-      const id = decodeId(rawId.endsWith('.json') ? rawId.slice(0, -5) : rawId);
-      if (!id) return sendJson(res, 200, { streams: [] });
-      const item = findItem(id);
-      if (item && item.type === type) return sendJson(res, 200, { streams: item.streams ?? [] });
-      if (type === 'series') {
-        const resolved = findVideo(id);
-        if (resolved && resolved.item.type === 'series') {
-          return sendJson(res, 200, { streams: resolved.video.streams ?? [] });
-        }
+      if (!['movie', 'series'].includes(type)) return sendJson(res, 200, { streams: [] });
+      let id;
+      try { id = decodeURIComponent(rawId.endsWith('.json') ? rawId.slice(0, -5) : rawId); } catch { id = ''; }
+      let streams = [];
+      try {
+        streams = await streamsFor(type, id);
+      } catch (error) {
+        console.error('Stream lookup failed:', error?.message ?? error);
       }
-      return sendJson(res, 200, { streams: [] });
+      return sendJson(res, 200, { streams });
     }
 
     return sendJson(res, 404, { error: 'Not found' });
+  }
+
+  return http.createServer(async (req, res) => {
+    try {
+      await handle(req, res);
+    } catch (error) {
+      console.error('Request failed:', error?.message ?? error);
+      if (!res.headersSent) sendJson(res, 500, { error: 'Internal error' });
+      else res.end();
+    }
   });
 }

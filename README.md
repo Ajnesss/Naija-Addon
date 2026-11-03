@@ -1,41 +1,34 @@
-# Naija Addon for Nuvio
+# Naija Streams (Nuvio addon)
 
-A standalone Node.js addon for discovering Nollywood films and series through Nuvio's Stremio-compatible addon protocol.
+A **stream-only** addon. It has no catalogue: keep using your normal catalogue (Xperience, Cinemeta, TMDB) to browse. When you open a title, Nuvio asks this addon for streams by IMDb ID.
 
-## Status
+## What it does
 
-This is the protocol foundation. It exposes a manifest, movie/series catalogues, metadata and stream routes. The catalogue starts empty intentionally: no provider is marked as working until its public integration method, rights/terms and playback behaviour have been verified. This avoids presenting dead links, trailers or YouTube clips as full-film streams.
+1. Looks up the title in Cinemeta. If the country is not Nigeria it returns nothing, so other titles are never touched.
+2. Searches YouTube (official Data API) for a full-length upload of that exact film or episode.
+3. Only returns a video if the title matches, the length fits the film's runtime (episodes: 15-150 min, correct season/episode), and it is not a trailer, clip, review or compilation. Up to three matches are returned, each with a channel name and length, plus an "Open in YouTube" fallback.
+
+Torrent/debrid results for the same titles still come from your other addons (Select, Torrentio, etc.). This addon adds the YouTube route alongside them.
+
+## Setup
+
+1. Create a free YouTube Data API v3 key in Google Cloud Console (APIs & Services -> Library -> YouTube Data API v3 -> Credentials).
+2. Set `YOUTUBE_API_KEY` on the service (see `DEPLOYMENT.md`).
+3. Add `https://<your-service>/manifest.json` in Nuvio.
+
+Without a key the addon runs but returns no streams.
+
+## Limits
+
+- Each search costs 100 of Google's 10,000 free daily quota units. Results are cached (24 hours when found, 1 hour when not) and `YOUTUBE_DAILY_SEARCH_LIMIT` (default 80) caps searches per day.
+- It only finds what is on YouTube. Titles with no full upload will show no stream from this addon.
+- `ytId` streams depend on the Nuvio client supporting them. The extra "Open in YouTube" stream is the fallback. Test on the actual device.
+- Matching is by title, year and length, so occasional misses or wrong matches are possible.
 
 ## Run
 
-- Node.js 18+
-- `npm test`
-- `npm start`
+Node.js 22+. `npm test`, then `npm start` (port 7000, or `PORT`). Check `/health` and `/manifest.json`.
 
-The server listens on `PORT` (default `7000`) and `HOST` (default `0.0.0.0`). Check `/health` and `/manifest.json`.
+## Background
 
-## Catalogues
-
-- All Nollywood Movies
-- English-language Nollywood Movies and Series
-- Nollywood Series
-- Yoruba Films and Series
-- Igbo Films and Series
-- Hausa & Kannywood Films and Series
-
-Add verified title metadata to `data/catalog.json`. Use IDs prefixed with `nollywood:`. `languages` may contain `english`, `yoruba`, `igbo`, and `hausa`. Movie entries use a verified `streams` array. Series entries use a `videos` array with a unique episode ID, season/episode numbers, and a verified stream list for each episode. See [the adapter contract](providers/ADAPTER_CONTRACT.md) before adding data.
-
-## Provider policy
-
-Only integrate a provider through a documented public API/feed or explicit permission from the service owner. Do not bypass DRM, subscriptions, geoblocks, anti-bot controls or access restrictions, and do not redistribute stream URLs contrary to provider terms. A title should only be labelled playable after a full-length playback test.
-
-## Deployment isolation
-
-This repository is independent. It must use its own service, environment and deployment. Do not reuse or modify the German addon repository, its Oracle instance, its secrets, or its running services.
-
-
-## Provider verification
-
-See [PROVIDER_STATUS.md](PROVIDER_STATUS.md) and [CONTACTS_AND_ACCESS.md](CONTACTS_AND_ACCESS.md). A provider must be explicitly approved and have verified full-length playback before any title is exposed in the catalogue. This gate is enforced in the server code; unapproved providers are filtered out.
-
-GitHub Actions runs the Node test suite on pushes and pull requests.
+`PROVIDER_STATUS.md`, `CONTACTS_AND_ACCESS.md` and `PROVIDER_OUTREACH.md` are research notes on licensed Nollywood providers. They are not used by the code.
